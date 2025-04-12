@@ -4,12 +4,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 
-from preprocessing.outlier_removal import remove_outliers
-from preprocessing.feature_selection import select_features_anova
-from preprocessing.scaler import scale_data
-from modelling.rf_feature_selector import select_features_rfe
-from modelling.model_dnn import build_model
-from modelling.train_eval import train_and_evaluate
+from src.pipelines.preprocessing.outlier_removal import remove_outliers
+from src.pipelines.preprocessing.feature_selection import select_features_anova
+from src.pipelines.preprocessing.scaler import scale_data
+from src.models.rf_feature_selector import select_features_rfe
+from src.models.model_dnn import build_model
+from src.models.train_eval import train_and_evaluate
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
