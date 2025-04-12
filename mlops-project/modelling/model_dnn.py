@@ -1,16 +1,12 @@
-import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 
-def build_model(input_shape):
-    model = tf.keras.Sequential([
-        tf.keras.layers.Dense(128, activation='relu', input_shape=(input_shape,)),
-        tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(64, activation='relu'),
-        tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(32, activation='sigmoid'),
-        tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(16, activation='relu'),
-        tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(6, activation='softmax')
+def build_model(input_dim):
+    model = Sequential([
+        Dense(64, activation='relu', input_dim=input_dim),
+        Dense(32, activation='relu'),
+        Dense(1, activation='linear')
     ])
-    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
     return model
+

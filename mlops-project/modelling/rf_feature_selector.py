@@ -1,8 +1,8 @@
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import RFE
+from sklearn.ensemble import RandomForestClassifier
 
-def select_features_rfe(X, y, n_features=15):
-    model = RandomForestClassifier(n_estimators=10)
-    rfe = RFE(model, n_features_to_select=n_features)
-    rfe.fit(X, y)
-    return X.columns[rfe.get_support()]
+def select_features_rfe(X, y, n_features_to_select=10):
+    model = RandomForestClassifier(n_estimators=100)
+    selector = RFE(model, n_features_to_select=n_features_to_select)
+    selector = selector.fit(X, y)
+    return X.columns[selector.support_]
