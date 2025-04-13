@@ -1,79 +1,68 @@
-import pandas as pd
 import logging
-from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder
-
-from src.pipelines.preprocessing.outlier_removal import remove_outliers
-from src.pipelines.preprocessing.feature_selection import select_features_anova
-from src.pipelines.preprocessing.scaler import scale_data
-from src.models.rf_feature_selector import select_features_rfe
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.model_selection import train_test_split
+from src.pipelines.preprocessing.data_loader import load_and_clean_data
+from src.pipelines.preprocessing.outlier_removal import OutlierRemover
+from src.pipelines.preprocessing.feature_selection import FeatureSelector
 from src.models.model_dnn import build_model
 from src.models.train_eval import train_and_evaluate
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Load and clean data
-logging.info("Loading dataset...")
-data = pd.read_csv('mlops-project/data/filtered_file.csv')
-data.dropna(inplace=True)
-data['score'] = data['score'].round().astype(int)
-logging.info(f"Dataset loaded with shape: {data.shape}")
+def main():
+    # File paths
+    file_path = 'mlops-project/data/filtered_file.csv'
+    columns_to_clean = [
+        'PRECTOT', 'PS', 'QV2M', 'T2M', 'T2MDEW', 'T2MWET', 'T2M_MAX', 'T2M_MIN',
+        'T2M_RANGE', 'TS', 'WS10M', 'WS10M_MAX', 'WS10M_MIN', 'WS10M_RANGE',
+        'WS50M', 'WS50M_MAX', 'WS50M_MIN', 'WS50M_RANGE'
+    ]
 
-# Remove outliers
-columns_to_clean = [
-    'PRECTOT', 'PS', 'QV2M', 'T2M', 'T2MDEW', 'T2MWET', 'T2M_MAX', 'T2M_MIN',
-    'T2M_RANGE', 'TS', 'WS10M', 'WS10M_MAX', 'WS10M_MIN', 'WS10M_RANGE',
-    'WS50M', 'WS50M_MAX', 'WS50M_MIN', 'WS50M_RANGE'
-]
-logging.info("Removing outliers...")
-data = remove_outliers(data, columns_to_clean)
-logging.info(f"Outlier removal completed. Data shape: {data.shape}")
+    # Step 1: Load and clean data
+    logging.info("Loading and cleaning data...")
+    data = load_and_clean_data(file_path)
 
-# Prepare features
-X = data.drop(['date', 'score'], axis=1)
-y = data['score']
-logging.info(f"Split into features and target. Features shape: {X.shape}, Target shape: {y.shape}")
+    # Split data into features and target
+    X = data.drop(['date', 'score'], axis=1)
+    y = data['score']
 
-# Identify categorical features
-categorical_features = X.select_dtypes(include=['object', 'category']).columns.tolist()
-numerical_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
-logging.info(f"Categorical features: {categorical_features}")
-logging.info(f"Numerical features: {numerical_features}")
+    # Step 2: Split data into train and test sets
+    logging.info("Splitting data into train and test sets...")
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Encoding categorical features
-if categorical_features:
-    logging.info("Applying OneHotEncoding to categorical features...")
-    preprocessor = ColumnTransformer([
-        ("cat", OneHotEncoder(handle_unknown='ignore'), categorical_features)
-    ], remainder='passthrough')
-    X = preprocessor.fit_transform(X)
-    logging.info(f"Encoding complete. Transformed feature shape: {X.shape}")
-else:
-    logging.info("No categorical features found. Skipping encoding.")
+    # Define preprocessing steps
+    numeric_features = columns_to_clean
+    categorical_features = X.select_dtypes(include=['object', 'category']).columns.tolist()
 
-# Train-test split
-logging.info("Splitting data into train and test sets...")
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-logging.info(f"Train shape: {X_train.shape}, Test shape: {X_test.shape}")
+    numeric_transformer = Pipeline(steps=[
+        ('outlier_removal', OutlierRemover(X, columns=numeric_features)),
+        ('scaler', StandardScaler())
+    ])
 
-# Feature Selection
-logging.info("Selecting features using RFE...")
-X_train_df = pd.DataFrame(X_train)
-X_test_df = pd.DataFrame(X_test)
-selected_features = select_features_anova(X_train_df, y_train)
-X_train_df = X_train_df[selected_features]
-X_test_df = X_test_df[selected_features]
-logging.info(f"Selected top {len(selected_features)} features.")
+    categorical_transformer = Pipeline(steps=[
+        ('onehot', OneHotEncoder(handle_unknown='ignore'))
+    ])
 
-# Scale data
-logging.info("Scaling features...")
-X_train_scaled, X_test_scaled = scale_data(X_train_df, X_test_df)
-logging.info("Scaling complete.")
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', numeric_transformer, numeric_features),
+            ('cat', categorical_transformer, categorical_features)
+        ]
+    )
 
-# Build, train, and evaluate model
-logging.info("Building and training the model...")
-model = build_model(X_train_scaled.shape[1])
-train_and_evaluate(model, X_train_scaled, y_train, X_test_scaled, y_test)
-logging.info("Model training and evaluation complete.")
+    # Define the full pipeline
+    pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('feature_selection', FeatureSelector(X, y, k=10)),
+    ])
+    model =  build_model(X_train, y_train)
+
+    # Step 3: Train and evaluate the pipeline
+    logging.info("Training and evaluating the pipeline...")
+    train_and_evaluate(model, X_train, y_train, X_test, y_test)
+
+if __name__ == "__main__":
+    main()

@@ -2,13 +2,13 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 
-def build_model(input_dim):
+def build_model(X_train, y_train):
     model = Sequential([
-        Dense(128, activation='relu', input_dim=input_dim),
+        Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
         Dense(64, activation='relu'),
         Dense(32, activation='sigmoid'),
         Dense(16, activation='sigmoid'),
-        Dropout(0.5),
+        # Dropout(0.5),
         Dense(6, activation='softmax')
     ])
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
