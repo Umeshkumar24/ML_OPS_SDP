@@ -1,0 +1,27 @@
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 2756796 entries, 0 to 2756795
+Data columns (total 20 columns):
+ #   Column       Dtype  
+---  ------       -----  
+ 0   fips         int64  
+ 1   PRECTOT      float64
+ 2   PS           float64
+ 3   QV2M         float64
+ 4   T2M          float64
+ 5   T2MDEW       float64
+ 6   T2MWET       float64
+ 7   T2M_MAX      float64
+ 8   T2M_MIN      float64
+ 9   T2M_RANGE    float64
+ 10  TS           float64
+ 11  WS10M        float64
+ 12  WS10M_MAX    float64
+ 13  WS10M_MIN    float64
+ 14  WS10M_RANGE  float64
+ 15  WS50M        float64
+ 16  WS50M_MAX    float64
+ 17  WS50M_MIN    float64
+ 18  WS50M_RANGE  float64
+ 19  score        int64  
+dtypes: float64(18), int64(2)
+memory usage: 420.7 MB

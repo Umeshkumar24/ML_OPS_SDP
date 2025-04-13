@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/umesh/Study%20Materials/codes/mlops-project-v3/mlruns/127639201168678076/616043a15ac34e07ab24d5a4a7d36444/artifacts
+end_time: 1744542175841
+entry_point_name: ''
+experiment_id: '127639201168678076'
+lifecycle_stage: active
+run_id: 616043a15ac34e07ab24d5a4a7d36444
+run_name: monumental-carp-652
+run_uuid: 616043a15ac34e07ab24d5a4a7d36444
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1744541938447
+status: 3
+tags: []
+user_id: umesh

@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/umesh/Study%20Materials/codes/mlops-project-v3/mlruns/127639201168678076/8381177615f04380986410d9c5659229/artifacts
+end_time: 1744540395409
+entry_point_name: ''
+experiment_id: '127639201168678076'
+lifecycle_stage: active
+run_id: 8381177615f04380986410d9c5659229
+run_name: sedate-duck-967
+run_uuid: 8381177615f04380986410d9c5659229
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1744539846509
+status: 3
+tags: []
+user_id: umesh

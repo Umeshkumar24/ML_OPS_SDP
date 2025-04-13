@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/umesh/Study%20Materials/codes/mlops-project-v3/mlruns/127639201168678076/d25d54c1b9e647fbbfeb67af10bf7574/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '127639201168678076'
+lifecycle_stage: active
+run_id: d25d54c1b9e647fbbfeb67af10bf7574
+run_name: secretive-doe-797
+run_uuid: d25d54c1b9e647fbbfeb67af10bf7574
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1744542431444
+status: 1
+tags: []
+user_id: umesh
